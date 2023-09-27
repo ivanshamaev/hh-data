@@ -1,0 +1,24 @@
+version: '3.7'
+
+services:
+  data_postgres:
+    container_name: postgres_container
+    image: postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-yourpassword}
+      PGDATA: /data/postgres
+    volumes:
+       - ps_data:/data/postgres
+    ports:
+      - "6432:5432"
+    networks:
+      - pgdatanet
+    restart: unless-stopped
+
+networks:
+  pgdatanet:
+    driver: bridge
+
+volumes:
+    ps_data:
