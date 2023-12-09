@@ -23,16 +23,18 @@ sudo nano /etc/nginx/sites-available/superset.conf
 server {
     listen 80;
     server_name hh-data.ru;
-    large_client_header_buffers 4 16k;
+    #large_client_header_buffers 4 16k;
 
-    location /superset/ {
+    location /analytics/ {
         proxy_pass http://127.0.0.1:8088/;
-        proxy_set_header Host $host:8088;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Real-IP $remote_addr;
+        roxy_set_header X-Script-Name /analytics;
+        proxy_redirect off;
         
-        proxy_buffers 16 4k;
-        proxy_buffer_size 2k;
-        proxy_set_header Host $http_host;
+        #proxy_buffers 16 4k;
+        #proxy_buffer_size 2k;
     }
 }
 
