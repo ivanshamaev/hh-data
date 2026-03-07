@@ -22,7 +22,7 @@ from airflow.providers.postgres.hooks.postgres import PostgresHook
 
 DEFAULT_CONN_ID = "pg_conn"
 VACANCY_DETAIL_URL = "https://api.hh.ru/vacancies"
-RUN_DURATION_S = 2 * 3600  # 2 часа
+RUN_DURATION_S = 24 * 3600  # 24 часа
 NORMAL_INTERVAL_S = 10
 BACKOFF_1MIN_S = 60
 BACKOFF_5MIN_S = 300
@@ -83,7 +83,7 @@ def _fetch_and_save_vacancy_details(conn_id: str = DEFAULT_CONN_ID) -> None:
 
     for vid in to_load:
         if time.monotonic() - start >= RUN_DURATION_S:
-            logging.info("Reached 2 hours, stopping. Loaded %d vacancies in this run.", len(loaded_ids))
+            logging.info(f"Reached {RUN_DURATION_S/3600} hours, stopping. Loaded %d vacancies in this run.", len(loaded_ids))
             break
 
         url = f"{VACANCY_DETAIL_URL}/{vid}?host=hh.ru"
@@ -95,7 +95,7 @@ def _fetch_and_save_vacancy_details(conn_id: str = DEFAULT_CONN_ID) -> None:
         if response.status_code == 200:
             _insert_one(hook, vid, response.json())
             loaded_ids.append(vid)
-            logging.info("Loaded vacancy id=%s (total this run: %d)", vid, len(loaded_ids))
+            #logging.info("Loaded vacancy id=%s (total this run: %d)", vid, len(loaded_ids))
             time.sleep(current_interval)
             continue
 

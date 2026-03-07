@@ -29,6 +29,15 @@ SEARCH_QUERIES = [
     "инженер данных",
     "разработчик dwh",
     "bi разработчик",
+    "Data-инженер",
+    "Team Lead DWH",
+    "Разработчик витрины",
+    "Архитектор данных",
+    "Lead Data Engineer",
+    "ML Engineer",
+    "pyspark",
+    "trino",
+    "Vertica",
 ]
 
 
