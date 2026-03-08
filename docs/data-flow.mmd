@@ -1,0 +1,75 @@
+flowchart TB
+    subgraph API["API HH.ru"]
+        api_roles["/professional_roles"]
+        api_vac["/vacancies"]
+        api_detail["/vacancies/{id}"]
+    end
+
+    subgraph raw["Слой RAW (схема raw)"]
+        direction TB
+        raw_cat["raw.categories"]
+        raw_roles["raw.roles"]
+        raw_vac["raw.vacancies"]
+        raw_search["raw.vacancies_search"]
+        raw_loaded["raw.vacancy_details_loaded"]
+        raw_detail["raw.vacancy_details"]
+        raw_wide["raw.vacancy_details_wide"]
+        raw_view["raw.vacancies_for_details (view)"]
+    end
+
+    subgraph dv["Слой Data Vault (схема dv)"]
+        direction TB
+        subgraph hubs["Хабы"]
+            H_V["H_Vacancy"]
+            H_A["H_Area"]
+            H_E["H_Employer"]
+            H_S["H_Schedule"]
+            H_Em["H_Employment"]
+            H_Ex["H_Experience"]
+            H_B["H_BillingType"]
+            H_F["H_EmploymentForm"]
+            H_PR["H_ProfessionalRole"]
+            H_Sk["H_Skill"]
+        end
+        subgraph links["Линки"]
+            L_VA["L_Vacancy_Area"]
+            L_VE["L_Vacancy_Employer"]
+            L_VS["L_Vacancy_Schedule"]
+            L_VEm["L_Vacancy_Employment"]
+            L_VEx["L_Vacancy_Experience"]
+            L_VB["L_Vacancy_BillingType"]
+            L_VF["L_Vacancy_EmploymentForm"]
+            L_VPR["L_Vacancy_ProfessionalRole"]
+            L_VSk["L_Vacancy_Skill"]
+        end
+        subgraph sats["Спутники"]
+            S_V["S_Vacancy_Details"]
+            S_A["S_Area_Details"]
+            S_E["S_Employer_Details"]
+            S_S["S_Schedule_Details"]
+            S_Em["S_Employment_Details"]
+            S_Ex["S_Experience_Details"]
+            S_B["S_BillingType_Details"]
+            S_F["S_EmploymentForm_Details"]
+            S_PR["S_ProfessionalRole_Details"]
+        end
+    end
+
+    api_roles --> raw_cat
+    api_roles --> raw_roles
+    api_vac --> raw_vac
+    api_vac --> raw_search
+    api_detail --> raw_detail
+    raw_detail --> raw_loaded
+    raw_detail --> raw_wide
+    raw_vac --> raw_view
+    raw_roles --> raw_view
+
+    raw_detail --> H_V
+    raw_detail --> H_A
+    raw_detail --> H_E
+    raw_detail --> hubs
+    hubs --> links
+    raw_detail --> links
+    raw_detail --> S_V
+    raw_detail --> sats
