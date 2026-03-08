@@ -22,7 +22,7 @@ from airflow.providers.postgres.hooks.postgres import PostgresHook
 
 DEFAULT_CONN_ID = "pg_conn"
 VACANCY_DETAIL_URL = "https://api.hh.ru/vacancies"
-RUN_DURATION_S = 24 * 3600  # 24 часа
+RUN_DURATION_S = 30 * 3600  # 24 часа
 NORMAL_INTERVAL_S = 10
 BACKOFF_1MIN_S = 60
 BACKOFF_5MIN_S = 300

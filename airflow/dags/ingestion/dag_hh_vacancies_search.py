@@ -38,16 +38,22 @@ SEARCH_QUERIES = [
     "pyspark",
     "trino",
     "Vertica",
+    "Airflow",
+    "ETL",
+    "Iceberg",
+    "dbt"
 ]
 
 
 def _normalize_vacancy_search(v: dict, search_query: str) -> dict:
-    """Извлекает поля для обозначения вакансии; search_query вместо professional_role_id."""
+    """Извлекает поля для обозначения вакансии, включая professional_roles из payload."""
     salary = v.get("salary") or {}
     area = v.get("area") or {}
     employer = v.get("employer") or {}
     type_ = v.get("type") or {}
     logo_urls = employer.get("logo_urls") or {}
+    professional_roles = v.get("professional_roles") or []
+    first_role = professional_roles[0] if professional_roles else {}
     return {
         "id": v.get("id"),
         "search_query": search_query,
@@ -66,6 +72,8 @@ def _normalize_vacancy_search(v: dict, search_query: str) -> dict:
         "vacancy_url": v.get("url"),
         "employer_url": employer.get("url"),
         "employer_logo_urls_240": logo_urls.get("240"),
+        "professional_roles_id": first_role.get("id"),
+        "professional_roles_name": first_role.get("name"),
     }
 
 
@@ -150,9 +158,10 @@ def _fetch_and_merge_vacancies_for_query(
             id, search_query, payload,
             name, area_name, salary_from, salary_to, currency, published_at,
             employer_id, employer_name, alternate_url, type_id, type_name,
-            vacancy_url, employer_url, employer_logo_urls_240, inserted_at
+            vacancy_url, employer_url, employer_logo_urls_240,
+            professional_roles_id, professional_roles_name, inserted_at
         )
-        VALUES (%s, %s, %s::jsonb, %s, %s, %s, %s, %s, %s::timestamptz, %s, %s, %s, %s, %s, %s, %s, %s, now())
+        VALUES (%s, %s, %s::jsonb, %s, %s, %s, %s, %s, %s::timestamptz, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now())
         ON CONFLICT (id, search_query) DO UPDATE SET
             payload = EXCLUDED.payload,
             name = EXCLUDED.name,
@@ -168,7 +177,9 @@ def _fetch_and_merge_vacancies_for_query(
             type_name = EXCLUDED.type_name,
             vacancy_url = EXCLUDED.vacancy_url,
             employer_url = EXCLUDED.employer_url,
-            employer_logo_urls_240 = EXCLUDED.employer_logo_urls_240
+            employer_logo_urls_240 = EXCLUDED.employer_logo_urls_240,
+            professional_roles_id = EXCLUDED.professional_roles_id,
+            professional_roles_name = EXCLUDED.professional_roles_name
     """
     try:
         for row in df.iter_rows(named=True):
@@ -192,6 +203,8 @@ def _fetch_and_merge_vacancies_for_query(
                     row["vacancy_url"],
                     row["employer_url"],
                     row["employer_logo_urls_240"],
+                    row["professional_roles_id"],
+                    row["professional_roles_name"],
                 ),
             )
         conn.commit()

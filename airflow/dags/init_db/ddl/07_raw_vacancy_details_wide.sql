@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS raw.vacancy_details_wide (
     initial_created_at         TIMESTAMPTZ,
     alternate_url               TEXT,
     description                 TEXT,
+    description_clean           TEXT,
     key_skills                  JSONB,
     premium                     BOOLEAN,
     archived                    BOOLEAN,
@@ -43,8 +44,11 @@ CREATE TABLE IF NOT EXISTS raw.vacancy_details_wide (
     employment_form_id          TEXT,
     employment_form_name        TEXT,
     work_schedule_by_days       JSONB,
+    work_schedule_by_days_name   TEXT,
     working_hours                JSONB,
+    working_hours_name          TEXT,
     professional_roles          JSONB,
+    professional_roles_name     TEXT,
     response_letter_required    BOOLEAN,
     updated_at                  TIMESTAMPTZ NOT NULL DEFAULT now()
 );
