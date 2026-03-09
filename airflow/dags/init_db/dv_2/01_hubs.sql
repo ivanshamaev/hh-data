@@ -1,27 +1,27 @@
--- Raw DV 2.0: хабы (бизнес-ключи сущностей). HK = MD5(business_key), record_source, load_dt.
+-- Raw DV 2.0: хабы (бизнес-ключи сущностей). HK = UUID от MD5(business_key), record_source, load_dt.
 
--- Вакансия
+-- Вакансия (id в API — числовой, может быть большим)
 CREATE TABLE IF NOT EXISTS dv.H_Vacancy (
-    vacancy_hk     TEXT NOT NULL PRIMARY KEY,
-    vacancy_id     TEXT NOT NULL UNIQUE,
+    vacancy_hk     UUID NOT NULL PRIMARY KEY,
+    vacancy_id     BIGINT NOT NULL UNIQUE,
     load_dt        TIMESTAMPTZ NOT NULL DEFAULT now(),
     record_source  TEXT NOT NULL DEFAULT 'raw.vacancy_details_wide'
 );
 COMMENT ON TABLE dv.H_Vacancy IS 'Hub: вакансия (business key: id)';
 
--- Регион/город (area)
+-- Регион/город (area.id в API — целое число)
 CREATE TABLE IF NOT EXISTS dv.H_Area (
-    area_hk        TEXT NOT NULL PRIMARY KEY,
-    area_id        TEXT NOT NULL UNIQUE,
+    area_hk        UUID NOT NULL PRIMARY KEY,
+    area_id        INT NOT NULL UNIQUE,
     load_dt        TIMESTAMPTZ NOT NULL DEFAULT now(),
     record_source  TEXT NOT NULL DEFAULT 'raw.vacancy_details_wide'
 );
 COMMENT ON TABLE dv.H_Area IS 'Hub: регион/город (business key: area.id)';
 
--- Работодатель
+-- Работодатель (employer.id в API — числовой)
 CREATE TABLE IF NOT EXISTS dv.H_Employer (
-    employer_hk    TEXT NOT NULL PRIMARY KEY,
-    employer_id    TEXT NOT NULL UNIQUE,
+    employer_hk    UUID NOT NULL PRIMARY KEY,
+    employer_id    BIGINT NOT NULL UNIQUE,
     load_dt        TIMESTAMPTZ NOT NULL DEFAULT now(),
     record_source  TEXT NOT NULL DEFAULT 'raw.vacancy_details_wide'
 );
@@ -29,7 +29,7 @@ COMMENT ON TABLE dv.H_Employer IS 'Hub: работодатель (business key: 
 
 -- График работы (schedule)
 CREATE TABLE IF NOT EXISTS dv.H_Schedule (
-    schedule_hk    TEXT NOT NULL PRIMARY KEY,
+    schedule_hk    UUID NOT NULL PRIMARY KEY,
     schedule_id    TEXT NOT NULL UNIQUE,
     load_dt        TIMESTAMPTZ NOT NULL DEFAULT now(),
     record_source  TEXT NOT NULL DEFAULT 'raw.vacancy_details_wide'
@@ -38,8 +38,8 @@ COMMENT ON TABLE dv.H_Schedule IS 'Hub: график работы (business key:
 
 -- Тип занятости (employment)
 CREATE TABLE IF NOT EXISTS dv.H_Employment (
-    employment_hk     TEXT NOT NULL PRIMARY KEY,
-    employment_id     TEXT NOT NULL UNIQUE,
+    employment_hk     UUID NOT NULL PRIMARY KEY,
+    employment_id  TEXT NOT NULL UNIQUE,
     load_dt           TIMESTAMPTZ NOT NULL DEFAULT now(),
     record_source     TEXT NOT NULL DEFAULT 'raw.vacancy_details_wide'
 );
@@ -47,7 +47,7 @@ COMMENT ON TABLE dv.H_Employment IS 'Hub: тип занятости (business ke
 
 -- Опыт (experience)
 CREATE TABLE IF NOT EXISTS dv.H_Experience (
-    experience_hk   TEXT NOT NULL PRIMARY KEY,
+    experience_hk   UUID NOT NULL PRIMARY KEY,
     experience_id   TEXT NOT NULL UNIQUE,
     load_dt         TIMESTAMPTZ NOT NULL DEFAULT now(),
     record_source   TEXT NOT NULL DEFAULT 'raw.vacancy_details_wide'
@@ -56,7 +56,7 @@ COMMENT ON TABLE dv.H_Experience IS 'Hub: требуемый опыт (business 
 
 -- Тип биллинга (billing_type)
 CREATE TABLE IF NOT EXISTS dv.H_BillingType (
-    billing_type_hk   TEXT NOT NULL PRIMARY KEY,
+    billing_type_hk   UUID NOT NULL PRIMARY KEY,
     billing_type_id   TEXT NOT NULL UNIQUE,
     load_dt           TIMESTAMPTZ NOT NULL DEFAULT now(),
     record_source     TEXT NOT NULL DEFAULT 'raw.vacancy_details_wide'
@@ -65,17 +65,17 @@ COMMENT ON TABLE dv.H_BillingType IS 'Hub: тип биллинга ваканс�
 
 -- Форма занятости (employment_form)
 CREATE TABLE IF NOT EXISTS dv.H_EmploymentForm (
-    employment_form_hk   TEXT NOT NULL PRIMARY KEY,
+    employment_form_hk   UUID NOT NULL PRIMARY KEY,
     employment_form_id   TEXT NOT NULL UNIQUE,
     load_dt              TIMESTAMPTZ NOT NULL DEFAULT now(),
     record_source        TEXT NOT NULL DEFAULT 'raw.vacancy_details_wide'
 );
 COMMENT ON TABLE dv.H_EmploymentForm IS 'Hub: форма занятости (business key: employment_form.id)';
 
--- Профессиональная роль (из professional_roles[].id)
+-- Профессиональная роль (professional_roles[].id в API — целое число)
 CREATE TABLE IF NOT EXISTS dv.H_ProfessionalRole (
-    professional_role_hk   TEXT NOT NULL PRIMARY KEY,
-    professional_role_id   TEXT NOT NULL UNIQUE,
+    professional_role_hk   UUID NOT NULL PRIMARY KEY,
+    professional_role_id   INT NOT NULL UNIQUE,
     load_dt                TIMESTAMPTZ NOT NULL DEFAULT now(),
     record_source          TEXT NOT NULL DEFAULT 'raw.vacancy_details_wide'
 );
@@ -83,7 +83,7 @@ COMMENT ON TABLE dv.H_ProfessionalRole IS 'Hub: профессиональная
 
 -- Навык (из key_skills[] — массив строк, BK = название навыка)
 CREATE TABLE IF NOT EXISTS dv.H_Skill (
-    skill_hk       TEXT NOT NULL PRIMARY KEY,
+    skill_hk       UUID NOT NULL PRIMARY KEY,
     skill_name     TEXT NOT NULL UNIQUE,
     load_dt        TIMESTAMPTZ NOT NULL DEFAULT now(),
     record_source  TEXT NOT NULL DEFAULT 'raw.vacancy_details_wide'

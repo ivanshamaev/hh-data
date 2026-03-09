@@ -2,7 +2,7 @@
 
 -- Спутник вакансии: все атрибуты из wide-таблицы, привязанные к моменту загрузки
 CREATE TABLE IF NOT EXISTS dv.S_Vacancy_Details (
-    vacancy_hk        TEXT NOT NULL REFERENCES dv.H_Vacancy(vacancy_hk),
+    vacancy_hk        UUID NOT NULL REFERENCES dv.H_Vacancy(vacancy_hk),
     load_dt           TIMESTAMPTZ NOT NULL DEFAULT now(),
     record_source     TEXT NOT NULL DEFAULT 'raw.vacancy_details_wide',
     name              TEXT,
@@ -41,7 +41,7 @@ COMMENT ON TABLE dv.S_Vacancy_Details IS 'Satellite: атрибуты вакан
 
 -- Спутник региона: название и url (из контекста вакансии)
 CREATE TABLE IF NOT EXISTS dv.S_Area_Details (
-    area_hk       TEXT NOT NULL REFERENCES dv.H_Area(area_hk),
+    area_hk       UUID NOT NULL REFERENCES dv.H_Area(area_hk),
     load_dt       TIMESTAMPTZ NOT NULL DEFAULT now(),
     record_source TEXT NOT NULL DEFAULT 'raw.vacancy_details_wide',
     area_name     TEXT,
@@ -52,7 +52,7 @@ COMMENT ON TABLE dv.S_Area_Details IS 'Satellite: атрибуты регион�
 
 -- Спутник работодателя
 CREATE TABLE IF NOT EXISTS dv.S_Employer_Details (
-    employer_hk      TEXT NOT NULL REFERENCES dv.H_Employer(employer_hk),
+    employer_hk      UUID NOT NULL REFERENCES dv.H_Employer(employer_hk),
     load_dt          TIMESTAMPTZ NOT NULL DEFAULT now(),
     record_source    TEXT NOT NULL DEFAULT 'raw.vacancy_details_wide',
     employer_name    TEXT,
@@ -64,7 +64,7 @@ COMMENT ON TABLE dv.S_Employer_Details IS 'Satellite: атрибуты рабо�
 
 -- Спутник графика работы
 CREATE TABLE IF NOT EXISTS dv.S_Schedule_Details (
-    schedule_hk    TEXT NOT NULL REFERENCES dv.H_Schedule(schedule_hk),
+    schedule_hk    UUID NOT NULL REFERENCES dv.H_Schedule(schedule_hk),
     load_dt        TIMESTAMPTZ NOT NULL DEFAULT now(),
     record_source  TEXT NOT NULL DEFAULT 'raw.vacancy_details_wide',
     schedule_name  TEXT,
@@ -74,7 +74,7 @@ COMMENT ON TABLE dv.S_Schedule_Details IS 'Satellite: название граф�
 
 -- Спутник типа занятости
 CREATE TABLE IF NOT EXISTS dv.S_Employment_Details (
-    employment_hk    TEXT NOT NULL REFERENCES dv.H_Employment(employment_hk),
+    employment_hk    UUID NOT NULL REFERENCES dv.H_Employment(employment_hk),
     load_dt          TIMESTAMPTZ NOT NULL DEFAULT now(),
     record_source    TEXT NOT NULL DEFAULT 'raw.vacancy_details_wide',
     employment_name  TEXT,
@@ -84,7 +84,7 @@ COMMENT ON TABLE dv.S_Employment_Details IS 'Satellite: название тип�
 
 -- Спутник опыта
 CREATE TABLE IF NOT EXISTS dv.S_Experience_Details (
-    experience_hk    TEXT NOT NULL REFERENCES dv.H_Experience(experience_hk),
+    experience_hk    UUID NOT NULL REFERENCES dv.H_Experience(experience_hk),
     load_dt          TIMESTAMPTZ NOT NULL DEFAULT now(),
     record_source    TEXT NOT NULL DEFAULT 'raw.vacancy_details_wide',
     experience_name  TEXT,
@@ -94,7 +94,7 @@ COMMENT ON TABLE dv.S_Experience_Details IS 'Satellite: название уро�
 
 -- Спутник типа биллинга
 CREATE TABLE IF NOT EXISTS dv.S_BillingType_Details (
-    billing_type_hk   TEXT NOT NULL REFERENCES dv.H_BillingType(billing_type_hk),
+    billing_type_hk   UUID NOT NULL REFERENCES dv.H_BillingType(billing_type_hk),
     load_dt           TIMESTAMPTZ NOT NULL DEFAULT now(),
     record_source     TEXT NOT NULL DEFAULT 'raw.vacancy_details_wide',
     billing_type_name TEXT,
@@ -104,7 +104,7 @@ COMMENT ON TABLE dv.S_BillingType_Details IS 'Satellite: название тип
 
 -- Спутник формы занятости
 CREATE TABLE IF NOT EXISTS dv.S_EmploymentForm_Details (
-    employment_form_hk   TEXT NOT NULL REFERENCES dv.H_EmploymentForm(employment_form_hk),
+    employment_form_hk   UUID NOT NULL REFERENCES dv.H_EmploymentForm(employment_form_hk),
     load_dt              TIMESTAMPTZ NOT NULL DEFAULT now(),
     record_source        TEXT NOT NULL DEFAULT 'raw.vacancy_details_wide',
     employment_form_name TEXT,
@@ -114,7 +114,7 @@ COMMENT ON TABLE dv.S_EmploymentForm_Details IS 'Satellite: название ф�
 
 -- Спутник профессиональной роли (название из professional_roles[].name)
 CREATE TABLE IF NOT EXISTS dv.S_ProfessionalRole_Details (
-    professional_role_hk   TEXT NOT NULL REFERENCES dv.H_ProfessionalRole(professional_role_hk),
+    professional_role_hk   UUID NOT NULL REFERENCES dv.H_ProfessionalRole(professional_role_hk),
     load_dt                TIMESTAMPTZ NOT NULL DEFAULT now(),
     record_source          TEXT NOT NULL DEFAULT 'raw.vacancy_details_wide',
     professional_role_name TEXT,

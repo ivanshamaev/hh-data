@@ -52,7 +52,8 @@ SELECT
     (SELECT string_agg(elem->>'name', ', ' ORDER BY ord) FROM jsonb_array_elements(COALESCE(d.payload->'professional_roles', '[]'::jsonb)) WITH ORDINALITY AS t(elem, ord)),
     now()
 FROM raw.vacancy_details d
-JOIN dv.H_Vacancy v ON v.vacancy_id = d.id
+JOIN dv.H_Vacancy v ON v.vacancy_id = (d.id)::bigint
+WHERE d.id ~ '^\d+$'
 ON CONFLICT (vacancy_hk, load_dt) DO NOTHING;
 
 -- Спутники справочных хабов (по одной записи на комбинацию hub+атрибуты за загрузку; дубли по разным вакансиям отсекаем по PK)
@@ -60,8 +61,9 @@ INSERT INTO dv.S_Area_Details (area_hk, load_dt, record_source, area_name, area_
 SELECT a.area_hk, COALESCE(d.inserted_at, now()), 'raw.vacancy_details',
        d.payload->'area'->>'name', d.payload->'area'->>'url'
 FROM raw.vacancy_details d
-JOIN dv.H_Area a ON a.area_id = d.payload->'area'->>'id'
+JOIN dv.H_Area a ON a.area_id = (d.payload->'area'->>'id')::int
 WHERE d.payload->'area'->>'id' IS NOT NULL AND (d.payload->'area'->>'id') <> ''
+  AND (d.payload->'area'->>'id') ~ '^\d+$'
 ON CONFLICT (area_hk, load_dt) DO NOTHING;
 
 INSERT INTO dv.S_Employer_Details (employer_hk, load_dt, record_source, employer_name, employer_url, employer_logo_240)
@@ -69,8 +71,9 @@ SELECT e.employer_hk, COALESCE(d.inserted_at, now()), 'raw.vacancy_details',
        d.payload->'employer'->>'name', d.payload->'employer'->>'url',
        d.payload->'employer'->'logo_urls'->>'240'
 FROM raw.vacancy_details d
-JOIN dv.H_Employer e ON e.employer_id = d.payload->'employer'->>'id'
+JOIN dv.H_Employer e ON e.employer_id = (d.payload->'employer'->>'id')::bigint
 WHERE d.payload->'employer'->>'id' IS NOT NULL AND (d.payload->'employer'->>'id') <> ''
+  AND (d.payload->'employer'->>'id') ~ '^\d+$'
 ON CONFLICT (employer_hk, load_dt) DO NOTHING;
 
 INSERT INTO dv.S_Schedule_Details (schedule_hk, load_dt, record_source, schedule_name)
@@ -118,6 +121,7 @@ INSERT INTO dv.S_ProfessionalRole_Details (professional_role_hk, load_dt, record
 SELECT r.professional_role_hk, COALESCE(d.inserted_at, now()), 'raw.vacancy_details', pr.elem->>'name'
 FROM raw.vacancy_details d
 CROSS JOIN LATERAL jsonb_array_elements(COALESCE(d.payload->'professional_roles', '[]'::jsonb)) AS pr(elem)
-JOIN dv.H_ProfessionalRole r ON r.professional_role_id = pr.elem->>'id'
+JOIN dv.H_ProfessionalRole r ON r.professional_role_id = (pr.elem->>'id')::int
 WHERE pr.elem->>'id' IS NOT NULL AND (pr.elem->>'id') <> ''
+  AND (pr.elem->>'id') ~ '^\d+$'
 ON CONFLICT (professional_role_hk, load_dt) DO NOTHING;
